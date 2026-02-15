@@ -1,4 +1,9 @@
-import io, csv, os, ast, builtins, sys, readline
+import io, csv, os, ast, builtins, sys # windows does not have readline
+try:
+    import readline
+except ModuleNotFoundError:
+    import pyreadline3 as readline
+
 from contextlib import redirect_stdout
 
 # Change working directory to script's folder
