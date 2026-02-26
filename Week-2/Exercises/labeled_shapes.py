@@ -17,16 +17,12 @@ hexagon_radius = triangle_height/(math.sqrt(3))
 # (1)the left triangle
 triangle_vertices = geometry.vertices_regular_polygon(3, triangle_radius) 
 """
-Here comes out a weird phenomenon:
 for geometry.vertices_regular_polygon, the first parameter is side number of the polygon
                                        and the second parameter is the radius of circumcircle.
 Side length of the  equilateral triangle is 50, so:
                                        the triangle_radius is 50/√3;
                                        both heights are 25*√3;
                                        the hexogon_radius is 25.
-However, in the output figure, the heights of the triangle and the hexagon do not match.
-If replacing "triangle_radius" with "line_length" in "geometry.vertices_regular_polygon(3, triangle_radius)",
-the heights would match in the output figure.
 """
 
 
