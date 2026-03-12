@@ -32,7 +32,7 @@ def kanizsa_rectangle(aspect_ratio, rect_scaling_factor, circle_scaling_factor):
     colors = [] # the upper two circles are black, and the two below are white
     for x in (-half_rect_w, half_rect_w):       # x is either -half_rect_w or half_rect_w
         for y in (-half_rect_h, half_rect_h):   # y is either -half_rect_h or half_rect_h
-            points.append((x, y)) # Important! It's (x, y), a point as a pair, not the value of x and the value of y separately
+            points.append((x, y)) # Important! It's (x, y), a pair as a point, not the value of x and the value of y separately
             colors.append(C_BLACK if y>0 else C_WHITE)
     
     circles = []

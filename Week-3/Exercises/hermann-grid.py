@@ -4,7 +4,7 @@ from expyriment.misc.constants import C_WHITE, C_BLACK
 
 def build_grid(nb_rows, nb_cols, size, color, space, background_color):
     
-    # Since background_colour should be set by parameters, 
+    # Since background_colour should be set by parameter, 
     # we create the experiment also inside the function.
     exp = design.Experiment(
         name="Hermann Grid", 
@@ -18,13 +18,13 @@ def build_grid(nb_rows, nb_cols, size, color, space, background_color):
     grid_w = size * nb_cols + space * (nb_cols - 1)
     grid_h = size * nb_rows + space * (nb_rows - 1)
 
-    # Just in case if the size of the grid does not fit the screen size, 
-    # we check ithey fit under current parameter values; if not, raise an error.
+    # (Just in case if the size of the grid does not fit the screen size) 
+    # We check if the grid size fits the screen size under current parameter values; if not, raise an error.
     width, height = exp.screen.size
     if grid_w > width or grid_h > height:
         raise ValueError("The target grid does not on fit the screen")
 
-    # start from the top left, we need to locate that top left square
+    # start from the top left square, let's locate all the little squares
     start_x = - grid_w // 2 + size // 2
     start_y = grid_h // 2 - size // 2
 
