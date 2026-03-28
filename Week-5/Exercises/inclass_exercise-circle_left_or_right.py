@@ -1,7 +1,7 @@
 """ 
 In this experiment:
 First, a question appears on the screen "Find the circle left or right?"
-Then, two shapes, a circle on the left and a square on the right, are shown simultaneously on the screen.\
+Then, two shapes, a circle on the left and a square on the right, are shown simultaneously on the screen.
 The participant press a key to indicate the location of the circle.
 If the response is correct, feedback is given "Correct!"; otherwise, feedback is "False!"
 """
