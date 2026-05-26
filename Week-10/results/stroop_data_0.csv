@@ -1,0 +1,10 @@
+"rt","stimulus","response","trial_type","trial_index","plugin_version","time_elapsed"
+"1356","<p> You will see the letters F or J.</p>
+       <p> Respond as fast and acccurately as possible.</p>
+       <p> Press any key to begin.</p>"," ","html-keyboard-response","0","2.0.0","1362"
+"1123","<p>F</p>","f","html-keyboard-response","1","2.0.0","2488"
+"462","<p>J</p>","j","html-keyboard-response","2","2.0.0","2952"
+"325","<p>F</p>","f","html-keyboard-response","3","2.0.0","3279"
+"350","<p>J</p>","j","html-keyboard-response","4","2.0.0","3630"
+"303","<p>F</p>","f","html-keyboard-response","5","2.0.0","3935"
+"294","<p>J</p>","j","html-keyboard-response","6","2.0.0","4231"

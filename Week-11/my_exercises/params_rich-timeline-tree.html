@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="https://unpkg.com/jspsych@8.0.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
+    <link href="https://unpkg.com/jspsych@8.0.2/css/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+
+  <script type="text/javascript">
+    const NUMBER_OF_TRIALS_PER_KEY = 10;
+    const KEYS = ['F', 'J'];
+    const BLANK_DURATION = 50 // ms;
+    const CROSS_DURATION = 250 // ms;
+
+    function createKeyPressTrial(
+      targetKey, 
+      lowerCase, // add lower case (so that now I have lowercase and uppercase)
+      keys, 
+      crossDuration, 
+      blankDuration
+    ){  
+      let fixationCrossTrial = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "+",
+        trial_duration: crossDuration,
+        choices: [],
+      };
+
+      let stimulusDisplayTrial = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: lowerCase  // condition ? value_if_true : value_if_false
+          ? targetKey.toLowerCase()  // if (lowerCase == true), show "f", otherwise "F".
+          : targetKey.toUpperCase(),
+        choices: keys,
+        stimulus_duration: 1000, // stimulus disappear after 1 second
+        post_trial_gap: blankDuration, // add a blank gap after the trial
+        data:{  // store the info
+          targetKey: targetKey,
+          lowerCase: lowerCase
+        }
+      };
+
+      return {
+        timeline:  [fixationCrossTrial, stimulusDisplayTrial]
+      }
+    }
+
+    function createShuffledListOfTrials(keys, trialsPerKey, crossDuration, blankDuration){
+      let possibleTrials = [];
+
+      for (let k = 0; k < keys.length; k += 1){
+        for (let lowerCase of [true, false]){
+          possibleTrials.push(
+            createKeyPressTrial(
+              keys[k], 
+              lowerCase,  // add lowerCase here, so each key has a lowercase and an upercase
+              keys, 
+              crossDuration, 
+              blankDuration
+            )
+          );
+        }
+      }
+
+      return jsPsych.randomization.repeat(possibleTrials, trialsPerKey);
+    }
+  </script>
+
+  <script type="text/javascript">
+    const jsPsych = initJsPsych({
+      on_finish: function(){
+        jsPsych.data.get().localSave("csv", "params_jspsych_results.csv");
+        document.body.innerHTML = "Thank you!";
+      }
+    });
+
+    const helloTrial = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <p>Hello!</p>
+        <p>You will be taking part in a toy experiment.
+          You will see one of two letters displayed on the screen (${KEYS[0]} or ${KEYS[1]}).</p>
+        <p> Your role will be to press the key corresponding to the letter.
+          <b>Please answer as fast as you can!</b></p>
+        <p>Press any key to continue.</p>
+        `
+    };
+    
+
+    let trials = createShuffledListOfTrials(KEYS, NUMBER_OF_TRIALS_PER_KEY, CROSS_DURATION, BLANK_DURATION);
+
+    let timeline = [helloTrial];
+
+    // Because we nested blank screen after the trial, even after order randomiztion the two will be in succession.
+    for (let trial of trials){
+      timeline.push(trial);
+    }
+
+    console.log(timeline.length)
+
+    jsPsych.run(timeline);
+  </script>
+</html>

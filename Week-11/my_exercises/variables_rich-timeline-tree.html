@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="https://unpkg.com/jspsych@8.0.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
+    <link href="https://unpkg.com/jspsych@8.0.2/css/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+
+  <script type="text/javascript">
+    const NUMBER_OF_TRIALS_PER_KEY = 10;
+    const KEYS = ['F', 'J'];
+    const BLANK_DURATION = 50; // ms;
+    const CROSS_DURATION = 250; // ms;
+
+
+  </script>
+
+  <script type="text/javascript">
+    const jsPsych = initJsPsych({
+      on_finish: function(){
+        jsPsych.data.get().localSave("csv", "variables_jspsych_results.csv");
+        document.body.innerHTML = "Thank you!";
+      }
+    });
+
+    const helloTrial = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <p>Hello!</p>
+        <p>You will be taking part in a toy experiment.
+          You will see one of two letters displayed on the screen (${KEYS[0]} or ${KEYS[1]}).</p>
+        <p> Your role will be to press the key corresponding to the letter.
+          <b>Please answer as fast as you can!</b></p>
+        <p>Press any key to continue.</p>
+        `
+    };
+    
+    // To define the fixation cross, I create a variable in which there is a jsPsych trial and an object.
+    const fixationTrial = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: "+",
+      trial_duration: CROSS_DURATION,
+      choices: "NO_KEYS" // No keyboard response is allowed, which means that the participant cannot use any key to respond to the fixation cross.
+
+    };
+
+    const letterTrial = {
+      type: jsPsychHtmlKeyboardResponse,
+      
+      stimulus: function(){  // stimulus is a function rather than stimulus: "F", because each trial in stimulus is different, they must be generated dynamically.
+        let letter = jsPsych.evaluateTimelineVariable("letter");  // the current letter
+        let lowerCase = jsPsych.evaluateTimelineVariable("lowerCase"); // the lowercase of this letter
+        return lowerCase
+          ? letter.toLowerCase()  // if lowercase is true, show the lowercase, otherwise show the uppercase
+          : letter.toUpperCase();
+      },
+      
+      choices: KEYS,
+      stimulus_duration: 1000,
+      post_trial_gap: BLANK_DURATION,
+      
+      data: function(){   // store all the info ,the expected correct answer and the lowercase condition. 
+        return {
+          expected_correct_response: jsPsych.evaluateTimelineVariable("letter"),
+          lowerCase: jsPsych.evaluateTimelineVariable("lowerCase")  // timelineVariable does not work for jsPsych v8, must use evaluatTimelineVariable
+        };
+      }
+    };
+
+
+    
+    // Here I list all the experimental conditions, and jsPsych will use these conditions to generate trials automatically.
+    const timelineVariables = [
+      {letter: "F", lowerCase: true},
+      {letter: "F", lowerCase: false},
+      {letter: "J", lowerCase: true},
+      {letter: "J", lowerCase: false}
+    ];
+
+    // I combine the fixation cross trial and the letter trial into one trial, 
+    // so that jsPsych will repeat this combined trial for every condition listed = inside timeline_variables.
+    const procedure = {
+      timeline: [fixationTrial, letterTrial],  
+      timeline_variables: timelineVariables,
+      randomize_order: true,  // shuffle the order so that the participant will not see the same order every time
+      repetitions: NUMBER_OF_TRIALS_PER_KEY
+    };
+
+    //The main timeline: first, show the instructions; second, run the actual procedure.
+    const timeline = [ 
+      helloTrial,
+      procedure
+    ];
+
+    jsPsych.run(timeline);
+  </script>
+</html>
+
+
+
+

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Stroop Experiment</title>
+  <!-- load the main jsPsych library from the internet, so that I have all the basic functions to run the experiment -->
+  <script src="https://unpkg.com/jspsych@8.0.2"></script>
+  <!-- load the plugin to show text and record keyboard responses, which will be stored in the .csv file -->
+  <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
+  <!-- I use jsPsych default style -->
+  <link href="https://unpkg.com/jspsych@8.0.2/css/jspsych.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body></body>
+
+<script>
+//// (1) Initialize the experiment
+// save all clooected data to the .csv file when the experiment finishes
+// and saving should be done automatically when the experiment finishes
+const jsPsych = initJsPsych({
+  on_finish: function(){
+    jsPsych.data.get().localSave("csv","stroop_data_2.csv");
+  }
+});
+
+
+//// (2) Before starting the experiment, it is necessary to show participants instructions about what to do and how to do it.
+const instructions = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus:    // the stimulus will be displayed on the screen
+      `<p> You will see the letters F or J.</p>
+       <p> Respond as fast and acccurately as possible.</p>
+       <p> Press any key to begin.</p>`
+};
+
+//// (3) Below are the trials. One for F, the other for J.
+// In Exercise 2, it is expected that trials are generated randomly and automatically rather than fixed by someone ahead.
+// 3.1 Define the possible keys as constants
+const KEYS = ["F", "J"];  // This is a list, which will be iterated automatically in the loop.
+const REPETITIONS = 20;    // Each key occurs several times
+const BLANK_DURATION = 200; // The blank screen will last for 200 milliseconds.
+
+// 3.2 create blank trial, because I need the "trial_duration" parameter when defining a jsPsychHtmlKeyboardResponse. This parameter (used like stimulus) defines the maximum duration of a trial.
+const blank_trial = {
+  type:jsPsychHtmlKeyboardResponse,
+  stimulus: "",
+  trial_duration: BLANK_DURATION,
+  choices: []
+};
+
+// 3.3 define a function to generate trials
+function create_trials(keys){
+  // The function will: 
+  // first, create an empty list to store the trials,
+  let trials = []
+  // second, go through each key in the list, and create a trial for each key
+  for (let key of keys) {
+    let trial = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus:
+      `<p>${key}</p>`,
+      choices:["f", "j"]
+    };
+
+  // third, timeline should be nested
+  let nested_trial = {
+    timeline: [
+      trial,
+      blank_trial
+    ]
+  };
+  // finally, add all trials to the list
+    trials.push(nested_trial);
+  }
+  return trials;             
+}
+
+//// (4) create random key list
+let random_keys = jsPsych.randomization.repeat(
+  KEYS,
+  REPETITIONS
+);
+
+//// (5) call the function to generate trials
+let generated_trials = create_trials(random_keys);
+
+//// (6) Add each trial into the timeline
+let timeline = [instructions];
+for (let trial of generated_trials){
+  timeline.push(trial);
+}
+ 
+jsPsych.run(timeline);
+</script>
+
+</html>
